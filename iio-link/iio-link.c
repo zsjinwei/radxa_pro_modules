@@ -12,6 +12,7 @@
 #include <linux/delay.h>
 #include <linux/iio/iio.h>
 #include <linux/spi/spi.h>
+#include <linux/i2c.h>
 #include <linux/gpio.h>
 #include <linux/delay.h>
 #include <linux/sched.h>
@@ -32,33 +33,101 @@
 #include "linux/../../drivers/base/base.h"
 
 //=================AD5235相关=================================
-#define AD5235_NUM 2
+#define AD5235_NUM 4
 // /*声明show函数*/
 static ssize_t ad5235_0_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
 static ssize_t ad5235_1_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
+static ssize_t ad5235_2_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
+static ssize_t ad5235_3_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
 
 static struct kobj_attribute  ad5235_name_attr[] = {
 	[0] = __ATTR(name, 0444, ad5235_0_name_show, NULL),
 	[1] = __ATTR(name, 0444, ad5235_1_name_show, NULL),
+	[2] = __ATTR(name, 0444, ad5235_2_name_show, NULL),
+	[3] = __ATTR(name, 0444, ad5235_3_name_show, NULL),
 };
 
-static char *spi_name[] = {"spi1.3", "spi1.4"};
-static char *spi_iio_link_name[] = {"ad5235_0", "ad5235_1"};
-static int sysfs_create_success[AD5235_NUM] = {0};
+static char *spi_name[] = {"spi1.3", "spi1.4", "spi1.5", "spi1.6"};
+static char *spi_iio_link_name[] = {"ad5235_0", "ad5235_1", "ad5235_2", "ad5235_3"};
+static int spi_sysfs_create_success[AD5235_NUM] = {0};
 static struct kobject *spi_kobj[AD5235_NUM];
 static struct device *spi_dev[AD5235_NUM];
 
 /*当读文件时执行的操作*/
 ssize_t ad5235_0_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
 {
-	const char name[9] = "ad5235.0";
+	const char name[] = "ad5235_0\n";
 	sprintf(buf, "%s", name);
 	return strlen(name) + 1;
 }
 
 ssize_t ad5235_1_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
 {
-	const char name[9] = "ad5235.1";
+	const char name[] = "ad5235_1\n";
+	sprintf(buf, "%s", name);
+	return strlen(name) + 1;
+}
+
+ssize_t ad5235_2_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
+{
+	const char name[] = "ad5235_2\n";
+	sprintf(buf, "%s", name);
+	return strlen(name) + 1;
+}
+
+ssize_t ad5235_3_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
+{
+	const char name[] = "ad5235_3\n";
+	sprintf(buf, "%s", name);
+	return strlen(name) + 1;
+}
+//==========================================================
+
+//===================AD5242相关==============================
+#define AD5242_NUM 4
+// /*声明show函数*/
+static ssize_t ad5242_0_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
+static ssize_t ad5242_1_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
+static ssize_t ad5242_2_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
+static ssize_t ad5242_3_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf);
+
+static struct kobj_attribute  ad5242_name_attr[] = {
+	[0] = __ATTR(name, 0444, ad5242_0_name_show, NULL),
+	[1] = __ATTR(name, 0444, ad5242_1_name_show, NULL),
+	[2] = __ATTR(name, 0444, ad5242_2_name_show, NULL),
+	[3] = __ATTR(name, 0444, ad5242_3_name_show, NULL),
+};
+static char *i2c_name[] = {"0-002c", "0-002d", "0-002e", "0-002f"};
+static char *i2c_iio_link_name[] = {"ad5242_0", "ad5242_1", "ad5242_2", "ad5242_3"};
+static int i2c_sysfs_create_success[AD5242_NUM] = {0};
+static struct kobject *i2c_kobj[AD5242_NUM];
+static struct device *i2c_dev[AD5242_NUM];
+
+/*当读文件时执行的操作*/
+ssize_t ad5242_0_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
+{
+	const char name[] = "ad5242_0\n";
+	sprintf(buf, "%s", name);
+	return strlen(name) + 1;
+}
+
+ssize_t ad5242_1_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
+{
+	const char name[] = "ad5242_1\n";
+	sprintf(buf, "%s", name);
+	return strlen(name) + 1;
+}
+
+ssize_t ad5242_2_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
+{
+	const char name[] = "ad5242_2\n";
+	sprintf(buf, "%s", name);
+	return strlen(name) + 1;
+}
+
+ssize_t ad5242_3_name_show(struct kobject *kobject, struct kobj_attribute *attr, char *buf)
+{
+	const char name[] = "ad5242_3\n";
 	sprintf(buf, "%s", name);
 	return strlen(name) + 1;
 }
@@ -128,12 +197,44 @@ static int iio_link_init(void)
 					sysfs_remove_file(spi_kobj[i], &ad5235_name_attr[i].attr);
 					continue;
 				}
-				sysfs_create_success[i] = 1;
+				spi_sysfs_create_success[i] = 1;
 			}
 		}
 		else
 		{
 			printk("can't find %s\n", spi_name[i]);
+			continue;
+		}
+	}
+
+	//find ad5242 i2c dir kobj
+	for (i = 0; i < AD5242_NUM; i++) {
+		i2c_dev[i] = bus_find_device_by_name(&i2c_bus_type, NULL, i2c_name[i]);
+		if (i2c_dev[i])
+		{
+			i2c_kobj[i] = &i2c_dev[i]->kobj;
+			if (i2c_kobj[i])
+			{
+				printk("find %s name: %s\n", i2c_name[i], i2c_kobj[i]->name);
+				sysfs_remove_file(i2c_kobj[i], &ad5242_name_attr[i].attr); //remove the original file
+				err = sysfs_create_file(i2c_kobj[i], &ad5242_name_attr[i].attr); //create new name file,and this file will noe be removed when this module remove
+				if (err)
+				{
+					printk("Create %s name file error!\n", i2c_name[i]);
+					continue;
+				}
+				err = sysfs_create_link(&iio_bus_type.p->devices_kset->kobj, i2c_kobj[i], i2c_iio_link_name[i]);
+				if (err)
+				{
+					printk("Create %s iio-link(%s) error!\n", i2c_name[i], i2c_iio_link_name[i]);
+					continue;
+				}
+				i2c_sysfs_create_success[i] = 1;
+			}
+		}
+		else
+		{
+			printk("can't find %s\n", i2c_name[i]);
 			continue;
 		}
 	}
@@ -189,12 +290,23 @@ static void iio_link_exit(void)
 	// delete ad5235 iio name file and symlink
 	for (i = 0; i < AD5235_NUM; i++)
 	{
-		if (sysfs_create_success[i])
+		if (spi_sysfs_create_success[i])
 		{
 			sysfs_remove_link(&iio_bus_type.p->devices_kset->kobj, spi_iio_link_name[i]);
 			sysfs_remove_file(spi_kobj[i], &ad5235_name_attr[i].attr);
 		}
 	}
+
+	// delete ad5242 iio name file and symlink
+	for (i = 0; i < AD5242_NUM; i++)
+	{
+		if (i2c_sysfs_create_success[i])
+		{
+			sysfs_remove_link(&iio_bus_type.p->devices_kset->kobj, i2c_iio_link_name[i]);
+			//sysfs_remove_file(i2c_kobj[i], &ad5242_name_attr[i].attr);
+		}
+	}
+
 	if (pwm_list_kobj)
 	{
 		sysfs_remove_link(&iio_bus_type.p->devices_kset->kobj, pwm_iio_link_name);

@@ -724,6 +724,12 @@ deps_/home/jayvee/workspace/radxa-pro/modules/iio-link/iio-link.o := \
     $(wildcard include/config/generic/iomap.h) \
     $(wildcard include/config/has/ioport/map.h) \
   include/linux/vmalloc.h \
+  include/linux/i2c.h \
+    $(wildcard include/config/i2c.h) \
+    $(wildcard include/config/i2c/slave.h) \
+    $(wildcard include/config/i2c/boardinfo.h) \
+    $(wildcard include/config/i2c/mux.h) \
+  include/uapi/linux/i2c.h \
   include/linux/gpio.h \
     $(wildcard include/config/gpiolib.h) \
     $(wildcard include/config/arch/have/custom/gpio/h.h) \

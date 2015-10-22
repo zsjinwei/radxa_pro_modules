@@ -1,7 +1,7 @@
 ifneq ($(KERNELRELEASE),)
 obj-m := iio-link.o
 else
-KDIR := /home/jayvee/workspace/radxa-pro/linux-adi
+KDIR := /home/jayvee/linux-adi
 all:
 	make -C $(KDIR) M=$(PWD) modules ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 clean:
