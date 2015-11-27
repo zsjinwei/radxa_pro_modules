@@ -125,7 +125,7 @@ static u64 ad9854_freq_to_ftw(struct ad9854_state *st, unsigned int freq)
 	unsigned int sysclk = (st->pdata->ref_mult) * (st->pdata->ref_clk);
 	u64 result = ((u64)freq) << 48;
 	do_div(result, sysclk);
-	return result;
+	return (result + 1);
 }
 
 /**
